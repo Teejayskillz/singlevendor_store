@@ -1,0 +1,12 @@
+/* ~/my_ecommerce_project/static/css/custom.css */
+
+/* Example: Add some custom spacing if needed, or override Bootstrap defaults */
+body {
+    padding-top: 56px; /* Adjust for fixed navbar if you add one */
+}
+
+/* Ensure images within cards fill their space consistently */
+.card-img-top {
+    object-fit: cover;
+    height: 200px; /* Fixed height for consistency */
+}

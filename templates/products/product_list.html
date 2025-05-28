@@ -1,0 +1,65 @@
+{# ~/my_ecommerce_project/templates/products/product_list.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}All Products{% endif %} - My E-commerce Store
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        {# Category Filter Section #}
+        <div class="col-md-3">
+            <div class="list-group mb-4">
+                <h4 class="mb-3">Categories</h4>
+                <a href="{% url 'products:product_list' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">All</a>
+                {% for c in categories %}
+                    <a href="{{ c.get_absolute_url }}" class="list-group-item list-group-item-action {% if category.slug == c.slug %}active{% endif %}">{{ c.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# Product List Section #}
+        <div class="col-md-9">
+            <h1 class="mb-4">{% if category %}{{ category.name }}{% else %}All Products{% endif %}</h1>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                {% for product in products %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <a href="{{ product.get_absolute_url }}">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'img/no_image.png' %}" class="card-img-top" alt="No Image" style="height: 200px; object-fit: cover;">
+                                {% endif %}
+                            </a>
+                            <div class="card-body text-center d-flex flex-column"> {# Added d-flex flex-column for sticky button #}
+                                <h5 class="card-title">
+                                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                                </h5>
+                                <p class="card-text text-success fw-bold fs-5">${{ product.price }}</p>
+
+                                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form mt-auto" data-product-name="{{ product.name }}"> {# mt-auto pushes to bottom #}
+                                    {% csrf_token %}
+                                    <div class="d-flex align-items-center justify-content-center mb-2"> {# Added flexbox for quantity and button #}
+                                        {{ product.add_to_cart_form.quantity.label_tag }}
+                                        {{ product.add_to_cart_form.quantity }}
+                                    </div>
+                                    {{ product.add_to_cart_form.override }}
+                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                {% empty %} {# <-- THIS IS THE ADDED BLOCK #}
+                    <div class="col-12">
+                        <p class="alert alert-info">No products are available in this category.</p>
+                        <p><a href="{% url 'products:product_list' %}" class="alert-link">View all products</a></p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

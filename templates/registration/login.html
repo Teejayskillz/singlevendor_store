@@ -1,0 +1,50 @@
+{# ~/my_ecommerce_project/templates/registration/login.html #}
+{% extends 'base.html' %}
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-5">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Log In</h3>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                    <p class="alert alert-danger">Your username and password didn't match. Please try again.</p>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                        <p class="alert alert-warning">Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+                    {% else %}
+                        <p class="alert alert-info">Please login to see this page.</p>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username:</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password:</label>
+                        {{ form.password }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+                <div class="form-group text-center">
+                    <small class="text-muted">
+                        <a href="{% url 'accounts:password_reset' %}">Forgot Password?</a>
+                    </small>
+                </div>
+                <p class="mt-3">
+                    Don't have an account? <a href="{% url 'users:register' %}">Sign Up</a> {# <-- ADD THIS LINE #}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+Payment Successful
+{% endblock %}
+
+{% block content %}
+    <h1>Payment Successful!</h1>
+    <p>Your order #{{ order.id }} has been successfully paid.</p>
+    <p>We've received your payment and your order is being processed.</p>
+    <p>You will receive an email confirmation shortly.</p>
+    <p>
+        <a href="{% url 'orders:order_detail' order.id %}" class="button">View Order Details</a>
+        <a href="{% url 'shop:product_list' %}" class="button">Continue Shopping</a>
+    </p>
+{% endblock %}

@@ -1,0 +1,162 @@
+{# ~/my_ecommerce_project/templates/base.html #}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My E-commerce Store{% endblock %}</title>
+
+    {# Bootswatch Pulse Theme CSS CDN Link #}
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.6/dist/pulse/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    {# Optional: Your custom CSS - place AFTER Bootswatch to override if needed #}
+    {# Ensure you have a static/css/custom.css file, even if empty for now #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {# Favicon (Optional) #}
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> {# Assuming you have a favicon.ico in static/img #}
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3"> {# Changed to bg-dark for contrast, increased padding #}
+            <div class="container-fluid"> {# Use container-fluid for full width, or container for fixed width #}
+
+                {# Brand/Logo #}
+                <a href="{% url 'home' %}" class="navbar-brand fw-bold fs-4">
+                    <i class="bi bi-shop me-2"></i> MyStore {# Optional: Add a Bootstrap Icon if you include their CSS #}
+                </a>
+
+                {# Toggler for small screens #}
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    {# Left-aligned Nav Items #}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'products:product_list' %}">Shop</a>
+                        </li>
+                        {# Optional: Categories Dropdown #}
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                                <li><a class="dropdown-item" href="#">Electronics</a></li>
+                                <li><a class="dropdown-item" href="#">Books</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'products:product_list' %}">All Categories</a></li>
+                            </ul>
+                        </li>
+                        
+                    </ul>
+
+                    <form class="d-flex mx-auto my-2 my-lg-0" action="{% url 'products:search_results' %}" method="get" role="search">
+                        {{ search_form.query }}
+                        <button class="btn btn-outline-light" type="submit">Search</button>
+                    </form>
+                    {# mx-auto for horizontal centering, my-2 my-lg-0 for vertical spacing on small screens #}
+
+
+                    {# Right-aligned Nav Items (Cart, User Auth) #}
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        {# Cart link with count #}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart:cart_detail' %}">
+                                <i class="bi bi-cart3"></i> Cart
+                                <span id="cart-count" class="badge bg-danger rounded-pill ms-1 {% if not cart %}d-none{% endif %}">
+                                    {{ cart|length }}
+                                </span>
+                            </a>
+                        </li>
+
+                        {# User Authentication Links #}
+                        {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile_detail' %}">Profile</a></li> 
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile_edit' %}">Edit Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'orders:order_list' %}">Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            {# Note: Your Login link here has duplicated <a> tags. Let's fix that. #}
+                            <a class="nav-link" href="{% url 'auth:login' %}">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-light ms-2 px-3 py-1" href="{% url 'users:register' %}">
+                                Sign Up
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+
+    <main class="container my-4">
+        {# Container for JavaScript-driven messages #}
+        <div id="js-message-container">
+            {# Dynamic messages from main.js will be inserted here #}
+        </div>
+    
+        {# Display Django messages (keep this as is) #}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    
+        {% block content %}
+        {% endblock %}
+    </main>
+    <div id="sticky-checkout-bar" class="sticky-footer-bar bg-light p-3 border-top d-flex justify-content-between align-items-center">
+        <div class="cart-summary d-flex align-items-center">
+            <span class="me-2">Your Cart:</span>
+            {# This span will display the initial cart count rendered by Django #}
+            <span id="sticky-cart-count" class="badge bg-primary fs-5">{{ cart|length }}</span>
+            <span class="ms-2">items</span>
+        </div>
+        {# ADJUSTED: Temporarily point to the cart detail page until orders app is ready #}
+        <a href="{% url 'cart:cart_detail' %}" id="sticky-checkout-button" class="btn btn-success">
+            Go to Cart
+            <i class="bi bi-arrow-right-circle ms-2"></i>
+        </a>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-4 mt-5"> {# Changed to bg-dark and increased padding #}
+        <div class="container">
+            <p class="mb-0">&copy; {% now "Y" %} My E-commerce Store. All rights reserved.</p>
+            <p class="mb-0 small">Powered by Django & Bootstrap</p>
+        </div>
+   
+    </footer>
+
+    {# Bootstrap JS CDN (Bundle with Popper) - KEEP THIS as is #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    {# Bootstrap Icons CDN (Optional) #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    {# Your custom JS (MUST BE AFTER Bootstrap JS) #}
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

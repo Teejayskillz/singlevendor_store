@@ -1,0 +1,26 @@
+{# ~/my_ecommerce_project/templates/orders/payment_success.html #}
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful!{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm text-center">
+                    <div class="card-header bg-success text-white">
+                        <h2 class="mb-0"><i class="bi bi-check-circle-fill me-2"></i>Payment Successful!</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Thank you for your purchase!</p>
+                        <p>Your order <strong>#{{ order.id }}</strong> has been successfully placed and paid.</p>
+                        <p>A confirmation email has been sent to your registered email address.</p>
+                        <hr>
+                        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary me-2">View Your Order</a>
+                        <a href="{% url 'products:product_list' %}" class="btn btn-secondary">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

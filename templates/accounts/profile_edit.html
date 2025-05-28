@@ -1,0 +1,39 @@
+{% extends 'base.html' %} {# Assuming you have a base.html template #}
+{% load crispy_forms_tags %} {# If you're using django-crispy-forms, for better styling #}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Your Profile</h2>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">User Information</legend>
+            {{ u_form|crispy }} {# Render User form with crispy filters #}
+        </fieldset>
+
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Additional Profile Information</legend>
+            {{ p_form|crispy }} {# Render Profile form with crispy filters #}
+        </fieldset>
+
+        <div class="form-group mt-3">
+            <button class="btn btn-primary" type="submit">Update Profile</button>
+        </div>
+        <div class="mt-4">
+            <p><a href="{% url 'accounts:password_change' %}" class="btn btn-link">Change Password</a></p>
+        </div>
+    </form>
+</div>
+{% endblock %}

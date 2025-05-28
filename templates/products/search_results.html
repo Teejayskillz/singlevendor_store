@@ -1,0 +1,73 @@
+{# ~/my_ecommerce_project/templates/products/search_results.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <h2 class="mb-4">
+            Search Results
+            {% if query %} {# Only show 'for "query"' if a query was actually entered #}
+                <small class="text-muted">for "{{ query }}"</small>
+            {% endif %}
+        </h2>
+
+        {# Display search status messages #}
+        {% if query %} {# If a search query was actually entered #}
+            {% if products %}
+                <p class="text-muted">Found {{ products|length }} result{% if products|length != 1 %}s{% endif %} for "{{ query }}".</p>
+            {% else %}
+                {# No products found for a specific query #}
+                <div class="alert alert-warning text-center" role="alert">
+                    No products found matching "{{ query }}". Please try a different search term.
+                    <p class="mt-2"><a href="{% url 'products:product_list' %}" class="alert-link">Browse all products</a></p>
+                </div>
+            {% endif %}
+        {% else %} {# If the query was empty (user clicked search without typing) #}
+            <div class="alert alert-info text-center" role="alert">
+                Please enter a search term. Showing all available products.
+            </div>
+            {# Optionally, you could show a count of all products here if desired #}
+            {# <p class="text-muted">Currently showing {{ products|length }} available product{% if products|length != 1 %}s{% endif %}.</p> #}
+        {% endif %}
+
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <a href="{{ product.get_absolute_url }}">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/no_image.png' %}" class="card-img-top" alt="No Image" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-truncate">
+                                <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                            </h5>
+                            <p class="card-text fw-bold fs-5">${{ product.price }}</p>
+                            <div class="mt-auto"> {# Pushes the button to the bottom #}
+                                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form d-grid">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm">Add to cart</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %} {# This {% empty %} block handles the *general* case where 'products' is empty for the loop #}
+                {# This message will appear ONLY if the 'products' queryset is completely empty,
+                   which means there are genuinely no products available (not a specific search miss).
+                   The specific search "no results" message is handled by the 'else' block above. #}
+                <div class="col-12">
+                    <p class="alert alert-info text-center">No products are available in the store at this time.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

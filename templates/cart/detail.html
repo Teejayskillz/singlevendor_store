@@ -1,0 +1,82 @@
+{# ~/my_ecommerce_project/templates/cart/detail.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your shopping cart{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="mb-4">Your shopping cart</h1>
+
+            {% if cart %}
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Total</th>
+                        <th scope="col"></th> {# For remove button #}
+                    </tr>
+                </thead>
+                {# Added ID for easier AJAX manipulation of rows #}
+                <tbody id="cart-items-body">
+                    {% for item in cart %}
+                        {% with product=item.product %}
+                        {# Added data-product-id to the row for easy JavaScript lookup #}
+                        <tr data-product-id="{{ product.id }}">
+                            <td>
+                                <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark d-flex align-items-center">
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="{{ product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'img/no_image.png' %}" class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="No Image">
+                                    {% endif %}
+                                    {{ product.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {# New: Link to product detail page to edit quantity #}
+                                <a href="{% url 'products:product_detail' item.product.id item.product.slug %}" class="btn btn-secondary btn-sm">Edit Quantity</a>
+                            </td>
+                            <td><span class="item-price-display">${{ item.price|floatformat:2 }}</span></td>
+                            <td><span class="item-total-price-display">${{ item.total_price|floatformat:2 }}</span></td>
+                            <td>
+                                {# Form for removing item (keep this as it's separate functionality) #}
+                                <form action="{% url 'cart:cart_remove' item.product.id %}" method="post" class="cart-remove-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    
+                        {% endwith %}
+                    {% endfor %}
+                    <tr class="table-info">
+                        <td colspan="3" class="text-end fw-bold">Total</td>
+                        {# Added ID for AJAX update #}
+                        <td colspan="2" class="fw-bold" id="cart-total-price-display">${{ cart.get_total_price }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <a href="{% url 'products:product_list' %}" class="btn btn-outline-primary me-md-2">Continue shopping</a>
+            </a>
+            {# THIS IS THE BUTTON TO CHANGE #}
+            <a href="{% url 'orders:order_create' %}" class="btn btn-primary">
+                Checkout
+            </a>
+            </div>
+
+            {% else %}
+                {# Added ID for potential JavaScript manipulation (showing/hiding) #}
+                <div id="empty-cart-message" class="alert alert-info text-center" role="alert">
+                    Your shopping cart is empty.
+                    <p class="mt-2"><a href="{% url 'products:product_list' %}" class="alert-link">Start shopping now!</a></p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

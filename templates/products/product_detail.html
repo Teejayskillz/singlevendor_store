@@ -1,0 +1,48 @@
+{# ~/my_ecommerce_project/templates/products/detail.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ product.name }} - My E-commerce Store
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+            {% else %}
+                <img src="{% static 'img/no_image.png' %}" class="img-fluid rounded" alt="No Image">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            <p class="lead text-success fw-bold fs-3 mb-3">${{ product.price }}</p>
+            <p class="text-muted mb-4">{{ product.description|linebreaksbr }}</p>
+
+            {# Add to Cart Form - ADD CLASS HERE #}
+            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form mb-4">
+                {% csrf_token %}
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto">
+                        {{ cart_product_form.quantity.label_tag }}
+                        {{ cart_product_form.quantity }}
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-lg btn-primary">Add to Cart</button>
+                    </div>
+                </div>
+                {{ cart_product_form.override }}
+            </form>
+
+
+            {# Placeholder for reviews later #}
+            <hr>
+            <p class="text-secondary">No reviews yet. Be the first!</p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'products:product_list' %}" class="btn btn-secondary">Back to all products</a>
+    </div>
+{% endblock %}
