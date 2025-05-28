@@ -1,0 +1,1 @@
+# singlevendor_store
