@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import dj_database_url 
 from dotenv import load_dotenv 
+import pymysql
 
 load_dotenv()
 
@@ -96,7 +97,7 @@ DATABASES = {
         conn_max_age=600
     )
 }
-
+pymysql.install_as_MySQLdb()
 
 
 # Password validation
