@@ -92,11 +92,7 @@ def initiate_payment(request, order_id):
 
     url = f"{settings.FLUTTERWAVE_BASE_URL}/payments"
 
-    print(f"DEBUG: FLUTTERWAVE_SECRET_KEY as seen by Django: {settings.FLUTTERWAVE_SECRET_KEY}")
-    print(f"DEBUG: Python Version: {sys.version}")
-    # print(f"DEBUG: Requests Version: {requests.__version__}") # REMOVE THIS LINE
-    print(f"DEBUG: HTTPLX Version: {httpx.__version__}") # <--- ADD THIS LINE
-
+   
     headers = {
         "Authorization": f"Bearer {settings.FLUTTERWAVE_SECRET_KEY}",
         "Content-Type": "application/json",
@@ -130,12 +126,6 @@ def initiate_payment(request, order_id):
         }
     }
 
-    print(f"\n--- DEBUG Flutterwave INITIATE ---")
-    print(f"URL: {url}")
-    print(f"Headers: {headers}")
-    print(f"Payload: {json.dumps(payload, indent=2)}")
-    print(f"--- END DEBUG Flutterwave INITIATE ---\n")
-
     try:
         # --- NEW: Use httpx instead of requests ---
         # httpx uses ssl.create_default_context() by default, similar to CustomSSLAdapter's base behavior.
@@ -144,10 +134,6 @@ def initiate_payment(request, order_id):
         response = httpx.post(url, headers=headers, json=payload, timeout=30.0) # Use json=payload for automatic JSON serialization
         # --- END NEW: Use httpx ---
 
-        print(f"DEBUG: Flutterwave Raw Response Status Code: {response.status_code}")
-        print(f"DEBUG: Flutterwave Raw Response Reason: {response.reason_phrase}") # httpx uses reason_phrase
-        print(f"DEBUG: Flutterwave Raw Response Headers: {response.headers}")
-        print(f"DEBUG: Flutterwave Raw Response Content: {response.text}")
 
         response.raise_for_status() # This will raise an HTTPError for 4xx/5xx status codes
         response_data = response.json()
@@ -168,7 +154,7 @@ def initiate_payment(request, order_id):
 
     except httpx.RequestError as e: # Catch httpx's specific exceptions
         logger.error(f"Flutterwave Request Error (full exception): {e}")
-        print(f"DEBUG: Type of RequestException: {type(e)}")
+     
         messages.error(request, f"An error occurred while initiating payment: {e}. Please try again.")
         return redirect('orders:order_detail', order_id=order.id)
     except Exception as e:
