@@ -18,3 +18,73 @@ body {
     pointer-events: none; /* Prevents click events */
     opacity: 0.65; /* Makes it look disabled */
 }
+
+/* ~/my_ecommerce_project/static/css/style.css (example) */
+
+/* Hero Section specific styling */
+.hero-section {
+    background-position: center;
+    background-size: cover;
+    color: white;
+    position: relative;
+}
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4); /* Dark overlay for text readability */
+    z-index: 1;
+}
+.hero-section > div {
+    position: relative;
+    z-index: 2;
+}
+
+/* Product Card Styling */
+.product-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+.product-img {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.product-card .card-body {
+    padding: 1.25rem;
+}
+.product-card .card-title {
+    min-height: 2rem; /* Ensure consistent height for titles */
+}
+
+/* Category Card Styling */
+.category-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-radius: 10px;
+    background-color: #f8f9fa; /* Light background */
+}
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    background-color: #e2e6ea;
+}
+
+/* General Section Spacing */
+section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+/* Tooltip for truncated titles */
+.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

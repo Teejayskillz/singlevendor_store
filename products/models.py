@@ -30,6 +30,7 @@ class Product(models.Model):
     available = models.BooleanField(default=True) # Is the product available for sale?
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    featured = models.BooleanField(default=False) 
 
     class Meta:
         ordering = ('name',)

@@ -19,14 +19,15 @@ from django.urls import path
 from django.urls import path, include # Import include
 from django.conf import settings # Import settings
 from django.conf.urls.static import static # Import static
-from . import views 
+
+from products.views import home as products_home_view
 from django.contrib.auth import urls as auth_urls 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include((auth_urls.urlpatterns, 'auth'))), 
     path('accounts/', include('accounts.urls')),
-    path('', views.home_page, name='home'), # Your desired home page
+    path('', products_home_view, name='home'),  # Your desired home page
     path('orders/', include('orders.urls')),
     path('products/', include('products.urls')), # Products app URLs
     path('cart/', include('cart.urls')),

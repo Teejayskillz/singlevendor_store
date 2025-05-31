@@ -10,8 +10,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'price', 'available', 'created', 'updated']
-    list_filter = ['available', 'created', 'updated']
-    list_editable = ['price', 'available'] # Allows editing directly from list view
+    list_display = ['name', 'slug', 'price', 'available', 'created', 'updated', 'featured']
+    list_filter = ['available', 'created', 'updated', 'featured']
+    list_editable = ['price', 'available', 'featured'] # Allows editing directly from list view
     prepopulated_fields = {'slug': ('name',)}
-    raw_id_fields = ['category'] # For selecting category, better for many categories
+    raw_id_fields = ['category'] # For selecting category, better for many categoriess
